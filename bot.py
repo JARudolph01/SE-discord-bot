@@ -1,7 +1,7 @@
 #! /bin/python3
 import discord
 
-botChannelId=803765954138996777
+botChannelId=00000000000000 #bot channel id
 
 print("starting bot...")
 
@@ -26,4 +26,4 @@ class MyClient(discord.Client):
             await botChannel.send('General Kenobi!')
 
 client = MyClient()
-client.run(open("token.txt","r").readline())
+client.run("Your_secret_key_here")
