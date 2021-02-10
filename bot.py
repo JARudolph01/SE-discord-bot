@@ -54,10 +54,18 @@ class MyClient(discord.Client):
                 deltaMazeAngle[1]=deltaMazeAngle[1]/yRequests
 
 
+            #calculate new angle
+            self.mazeAngle[0]+=deltaMazeAngle[0]
+            self.mazeAngle[1]+=deltaMazeAngle[1]
+
+            #make sure angle never goes above 1 or below -1
+            #https://www.tutorialspoint.com/How-to-clamp-floating-numbers-in-Python
+            self.mazeAngle[0] = max(min(self.mazeAngle[0], 1), -1)
+            self.mazeAngle[1] = max(min(self.mazeAngle[1], 1), -1)
 
 
             #debug: send deltaMazeAngle
-            await botChannel.send(deltaMazeAngle)
+            await botChannel.send(self.mazeAngle)
 
 
             #remove processed requests. save unprocessed requests for next cycle.
