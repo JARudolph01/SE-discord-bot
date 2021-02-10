@@ -1,5 +1,6 @@
 #! /bin/python3
 #allen testing branch
+#http://32x8.com/
 import discord
 import asyncio
 
@@ -30,7 +31,6 @@ class MyClient(discord.Client):
             participatingUsers=[]
 
             #get sum
-            # TODO: restrict players to one command per cycle
             # FIXME: surely there must be an easier way to get the sums.
             if len(self.deltaCommands)>0:
                 for request in self.deltaCommands[0:totalRequests]:
@@ -76,8 +76,6 @@ class MyClient(discord.Client):
 
             #remove processed requests. save unprocessed requests for next cycle.
             del self.deltaCommands[0:totalRequests]
-
-
 
 
     async def on_ready(self):
