@@ -27,26 +27,31 @@ class MyClient(discord.Client):
             deltaMazeAngle = [0.0,0.0]
             xRequests=0
             yRequests=0
+            participatingUsers=[]
 
             #get sum
             # TODO: restrict players to one command per cycle
             # FIXME: surely there must be an easier way to get the sums.
             if len(self.deltaCommands)>0:
                 for request in self.deltaCommands[0:totalRequests]:
-                    request = request[1]
-                    if request == "w":
-                        yRequests+=1
-                        deltaMazeAngle[1]+=1
-                    elif request == "s":
-                        yRequests+=1
-                        deltaMazeAngle[1]-=1
 
-                    elif request == "a":
-                        xRequests+=1
-                        deltaMazeAngle[0]-=1
-                    elif request == "d":
-                        xRequests+=1
-                        deltaMazeAngle[0]+=1
+                    if request[0] not in participatingUsers:
+                        participatingUsers.append(request[0])
+
+                        request = request[1]
+                        if request == "w":
+                            yRequests+=1
+                            deltaMazeAngle[1]+=1
+                        elif request == "s":
+                            yRequests+=1
+                            deltaMazeAngle[1]-=1
+
+                        elif request == "a":
+                            xRequests+=1
+                            deltaMazeAngle[0]-=1
+                        elif request == "d":
+                            xRequests+=1
+                            deltaMazeAngle[0]+=1
 
             #get average
             if xRequests > 0:
