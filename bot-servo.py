@@ -36,8 +36,8 @@ class MyClient(discord.Client):
         botChannel=self.get_channel(botChannelId)
         while True:
 
-            duty1=(mazeAngle[0]+1)*50
-            duty2=(mazeAngle[1]+1)*50
+            duty1=(mazeAngle[0]+1.0)*50
+            duty2=(mazeAngle[1]+1.0)*50
             pi_pwm.ChangeDutyCycle(duty1) #provide duty cycle in the range 0-100
             pi_pwm2.ChangeDutyCycle(duty2) #provide duty cycle in the range 0-100
 
