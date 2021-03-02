@@ -42,7 +42,7 @@ class MyClient(discord.Client):
             pi_pwm2.ChangeDutyCycle(duty2) #provide duty cycle in the range 0-100
 
             #delay
-            await asyncio.sleep(.1)
+            await asyncio.sleep(.01)
 
             #do calculation 
             totalRequests = len(self.deltaCommands)
