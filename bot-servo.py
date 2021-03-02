@@ -42,7 +42,7 @@ class MyClient(discord.Client):
             pi_pwm2.ChangeDutyCycle(duty2) #provide duty cycle in the range 0-100
 
             #delay
-            await asyncio.sleep(1)
+            await asyncio.sleep(.1)
 
             #do calculation 
             totalRequests = len(self.deltaCommands)
@@ -90,7 +90,8 @@ class MyClient(discord.Client):
 
 
             #debug: send deltaMazeAngle
-            await botChannel.send(self.mazeAngle)
+            #await botChannel.send(self.mazeAngle)
+            print(self.mazeAngle)
 
 
             #remove processed requests. save unprocessed requests for next cycle.
@@ -126,6 +127,8 @@ class MyClient(discord.Client):
             self.deltaCommands.append([message.author.id,"s"])
         if message.content == "d":
             self.deltaCommands.append([message.author.id,"d"])
+
+        await botChannel.send(self.mazeAngle)
 
 
     
