@@ -18,8 +18,8 @@ GPIO.setup(ledpin,GPIO.OUT)
 GPIO.setup(ledpin2,GPIO.OUT)
 pi_pwm = GPIO.PWM(ledpin,255)		#create PWM instance with frequency
 pi_pwm2 = GPIO.PWM(ledpin2,255)		#create PWM instance with frequency
-pi_pwm.start(50)				#start PWM of required Duty Cycle 
-pi_pwm2.start(50)				#start PWM of required Duty Cycle 
+pi_pwm.start(0)				#start PWM of required Duty Cycle 
+pi_pwm2.start(0)				#start PWM of required Duty Cycle 
 
 
 botChannelId=803765954138996777 #bot channel id
@@ -35,11 +35,13 @@ class MyClient(discord.Client):
     async def updateLoop(self):
         botChannel=self.get_channel(botChannelId)
         while True:
-
-            duty1=(mazeAngle[0]+1.0)*50
-            duty2=(mazeAngle[1]+1.0)*50
-            pi_pwm.ChangeDutyCycle(duty1) #provide duty cycle in the range 0-100
-            pi_pwm2.ChangeDutyCycle(duty2) #provide duty cycle in the range 0-100
+	    
+            for covid in range(1, 100):
+                duty1=(mazeAngle[0]+1.0)*50
+                duty2=(mazeAngle[1]+1.0)*50
+                pi_pwm.ChangeDutyCycle(duty1) #provide duty cycle in the range 0-100
+                pi_pwm2.ChangeDutyCycle(duty2) #provide duty cycle in the range 0-100
+	        sleep(.01)
 
             #delay
             await asyncio.sleep(.01)

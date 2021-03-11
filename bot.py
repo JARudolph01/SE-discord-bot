@@ -2,13 +2,31 @@
 import discord
 import asyncio
 
+
+import RPi.GPIO as GPIO
+from time import sleep
+
+ledpin = 33                             # PWM pin connected to LED
+ledpin2 = 32                            # PWM pin connected to LED
+GPIO.setwarnings(False)                 #disable warnings
+GPIO.setmode(GPIO.BOARD)                #set pin numbering system
+GPIO.setup(ledpin,GPIO.OUT)
+GPIO.setup(ledpin2,GPIO.OUT)
+pi_pwm = GPIO.PWM(ledpin,255)           #create PWM instance with frequency
+pi_pwm2 = GPIO.PWM(ledpin2,255)         #create PWM instance with frequency
+pi_pwm.start(0)                         #start PWM of required Duty Cycle
+pi_pwm2.start(0)                                #start PWM of required Duty Cycle
+
+
+
+
 botChannelId=803765954138996777 #bot channel id
 
 print("starting bot...")
 
 
 class MyClient(discord.Client):
-
+    #global mazeAngle
     mazeAngle = [0.0,0.0]
     deltaCommands=[]
 
@@ -17,7 +35,17 @@ class MyClient(discord.Client):
         while True:
 
             #delay
-            await asyncio.sleep(1)
+            #await asyncio.sleep(1)
+
+            for covid in range(0,100):
+                 duty = (self.mazeAngle[0]+1)*50
+                 duty2 = (self.mazeAngle[1]+1)*50
+                 pi_pwm.ChangeDutyCycle(duty)
+                 pi_pwm2.ChangeDutyCycle(duty2)
+                 sleep(.01)
+
+            self.mazeAngle[0] = 0
+            self.mazeAngle[1] = 0
 
             #do calculation 
             totalRequests = len(self.deltaCommands)
@@ -32,14 +60,13 @@ class MyClient(discord.Client):
             # FIXME: surely there must be an easier way to get the sums.
             if len(self.deltaCommands)>0:
                 for request in self.deltaCommands[0:totalRequests]:
-                    request = request[1]
+                    #request = request[1]
                     if request == "w":
                         yRequests+=1
                         deltaMazeAngle[1]+=1
                     elif request == "s":
                         yRequests+=1
                         deltaMazeAngle[1]-=1
-
                     elif request == "a":
                         xRequests+=1
                         deltaMazeAngle[0]-=1
@@ -60,8 +87,8 @@ class MyClient(discord.Client):
 
             #make sure angle never goes above 1 or below -1
             #https://www.tutorialspoint.com/How-to-clamp-floating-numbers-in-Python
-            self.mazeAngle[0] = max(min(self.mazeAngle[0], 1), -1)
-            self.mazeAngle[1] = max(min(self.mazeAngle[1], 1), -1)
+            #self.mazeAngle[0] = max(min(self.mazeAngle[0], 1), -1)
+            #self.mazeAngle[1] = max(min(self.mazeAngle[1], 1), -1)
 
 
             #debug: send deltaMazeAngle
@@ -78,7 +105,7 @@ class MyClient(discord.Client):
         print('Logged on as', self.user)
         await self.get_channel(botChannelId).send('Hello World!')
 
-        self.deltaCommands = []
+        #self.deltaCommands = []
         await self.updateLoop()
 
     async def on_message(self, message):
