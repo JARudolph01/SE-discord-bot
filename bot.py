@@ -26,16 +26,15 @@ print("starting bot...")
 
 
 class MyClient(discord.Client):
-    #global mazeAngle
     mazeAngle = [0.0,0.0]
-    deltaCommands=[]
+    xAxis = 0
+    yAxis = 0
+    xRequests = 0
+    yRequests = 0
 
     async def updateLoop(self):
         botChannel=self.get_channel(botChannelId)
         while True:
-
-            #delay
-            #await asyncio.sleep(1)
 
             for covid in range(0,100):
                  duty = (self.mazeAngle[0]+1)*50
@@ -44,92 +43,54 @@ class MyClient(discord.Client):
                  pi_pwm2.ChangeDutyCycle(duty2)
                  sleep(.01)
 
+            #reset tilt
             self.mazeAngle[0] = 0
             self.mazeAngle[1] = 0
 
-            #do calculation 
-            totalRequests = len(self.deltaCommands)
-
-            #temporary vars
-            deltaMazeAngle = [0.0,0.0]
-            xRequests=0
-            yRequests=0
-
-            #get sum
-            # TODO: restrict players to one command per cycle
-            # FIXME: surely there must be an easier way to get the sums.
-            if len(self.deltaCommands)>0:
-                for request in self.deltaCommands[0:totalRequests]:
-                    #request = request[1]
-                    if request == "w":
-                        yRequests+=1
-                        deltaMazeAngle[1]+=1
-                    elif request == "s":
-                        yRequests+=1
-                        deltaMazeAngle[1]-=1
-                    elif request == "a":
-                        xRequests+=1
-                        deltaMazeAngle[0]-=1
-                    elif request == "d":
-                        xRequests+=1
-                        deltaMazeAngle[0]+=1
-
             #get average
-            if xRequests > 0:
-                deltaMazeAngle[0]=deltaMazeAngle[0]/xRequests
-            if yRequests > 0:
-                deltaMazeAngle[1]=deltaMazeAngle[1]/yRequests
-
+            if self.xRequests > 0:
+                self.xAxis=self.xAxis/self.xRequests
+            if self.yRequests > 0:
+                self.yAxis=self.yAxis/self.yRequests
 
             #calculate new angle
-            self.mazeAngle[0]+=deltaMazeAngle[0]
-            self.mazeAngle[1]+=deltaMazeAngle[1]
+            self.mazeAngle[0]+=self.xAxis
+            self.mazeAngle[1]+=self.yAxis
 
-            #make sure angle never goes above 1 or below -1
-            #https://www.tutorialspoint.com/How-to-clamp-floating-numbers-in-Python
-            #self.mazeAngle[0] = max(min(self.mazeAngle[0], 1), -1)
-            #self.mazeAngle[1] = max(min(self.mazeAngle[1], 1), -1)
-
+            #reset variables
+            self.xAxis=0
+            self.yAxis=0
+            self.yRequests=0
+            self.xRequests=0
 
             #debug: send deltaMazeAngle
             await botChannel.send(self.mazeAngle)
 
-
-            #remove processed requests. save unprocessed requests for next cycle.
-            del self.deltaCommands[0:totalRequests]
-
-
-
-
     async def on_ready(self):
         print('Logged on as', self.user)
         await self.get_channel(botChannelId).send('Hello World!')
-
-        #self.deltaCommands = []
         await self.updateLoop()
 
     async def on_message(self, message):
         botChannel=self.get_channel(botChannelId)
-
         if message.channel != botChannel:
             return
-
         if message.author == self.user:
             return
-
         if message.content == "hello there":
             await botChannel.send('General Kenobi!')
-
         if message.content == "w":
-            self.deltaCommands.append([message.author.id,"w"])
+           self.yAxis+=1
+           self.yRequests+=1
         if message.content == "a":
-            self.deltaCommands.append([message.author.id,"a"])
+           self.xAxis-=1
+           self.xRequests+=1
         if message.content == "s":
-            self.deltaCommands.append([message.author.id,"s"])
+           self.yAxis-=1
+           self.yRequests+=1
         if message.content == "d":
-            self.deltaCommands.append([message.author.id,"d"])
-        
-    
+           self.xAxis+=1
+           self.xRequests+=1
 
 #start bot
 client = MyClient()
