@@ -2,21 +2,12 @@
 import discord
 import asyncio
 
-
-import RPi.GPIO as GPIO
+import pigpio
 from time import sleep
 
-ledpin = 33                             # PWM pin connected to LED
-ledpin2 = 32                            # PWM pin connected to LED
-GPIO.setwarnings(False)                 #disable warnings
-GPIO.setmode(GPIO.BOARD)                #set pin numbering system
-GPIO.setup(ledpin,GPIO.OUT)
-GPIO.setup(ledpin2,GPIO.OUT)
-pi_pwm = GPIO.PWM(ledpin,255)           #create PWM instance with frequency
-pi_pwm2 = GPIO.PWM(ledpin2,255)         #create PWM instance with frequency
-pi_pwm.start(0)                         #start PWM of required Duty Cycle
-pi_pwm2.start(0)                                #start PWM of required Duty Cycle
-
+pin1 = 13                             # PWM pin connected to LED
+pin2 = 12                            # PWM pin connected to LED
+pi = pigpio.pi()
 
 
 
@@ -24,6 +15,7 @@ botChannelId=803765954138996777 #bot channel id
 
 print("starting bot...")
 
+pi.set_mode(pin1, pigpio.OUTPUT)
 
 class MyClient(discord.Client):
     mazeAngle = [0.0,0.0]
@@ -36,11 +28,7 @@ class MyClient(discord.Client):
         botChannel=self.get_channel(botChannelId)
         while True:
 
-            #for covid in range(0,100):
-            duty = (self.mazeAngle[0]+1)*50
-            duty2 = (self.mazeAngle[1]+1)*50
-            pi_pwm.ChangeDutyCycle(duty)
-            pi_pwm2.ChangeDutyCycle(duty2)
+
             sleep(1)
 
             #reset tilt
@@ -53,15 +41,20 @@ class MyClient(discord.Client):
             if self.yRequests > 0:
                 self.yAxis=self.yAxis/self.yRequests
 
+
+
             #calculate new angle
             self.mazeAngle[0]+=self.xAxis
             self.mazeAngle[1]+=self.yAxis
+
+            pi.set_PWM_dutycycle(pin1, self.mazeAngle[0] * 50)
 
             #reset variables
             self.xAxis=0
             self.yAxis=0
             self.yRequests=0
             self.xRequests=0
+
 
             #debug: send deltaMazeAngle
             await botChannel.send(self.mazeAngle)
