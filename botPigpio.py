@@ -29,10 +29,11 @@ class MyClient(discord.Client):
         botChannel=self.get_channel(botChannelId)
         while True:
 
-            pi.set_servo_pulsewidth(12, ((self.mazeAngle[0]+1)*1000)+500)
-            pi.set_servo_pulsewidth(13, ((self.mazeAngle[1]+1)*1000)+500)
+            pi.set_servo_pulsewidth(12, ((self.mazeAngle[0]+1)*500)+1000)
+            pi.set_servo_pulsewidth(13, ((self.mazeAngle[1]+1)*500)+1000)
 
-            sleep(1)
+            #sleep(1)
+            await asyncio.sleep(1)
 
             #reset tilt
             self.mazeAngle[0] = 0
@@ -50,8 +51,6 @@ class MyClient(discord.Client):
             self.mazeAngle[0]+=self.xAxis
             self.mazeAngle[1]+=self.yAxis
 
-            #pi.set_PWM_dutycycle(pin1, self.mazeAngle[0] * 50)
-
             #reset variables
             self.xAxis=0
             self.yAxis=0
@@ -60,7 +59,7 @@ class MyClient(discord.Client):
 
 
             #debug: send deltaMazeAngle
-            await botChannel.send(self.mazeAngle)
+            #await botChannel.send(self.mazeAngle)
 
     async def on_ready(self):
         print('Logged on as', self.user)
