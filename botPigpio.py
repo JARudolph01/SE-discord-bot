@@ -5,8 +5,8 @@ import asyncio
 import pigpio
 from time import sleep
 
-pin1 = 13                             # PWM pin connected to LED
-pin2 = 12                            # PWM pin connected to LED
+#pin1 = 13                             # PWM pin connected to LED
+#pin2 = 12                            # PWM pin connected to LED
 pi = pigpio.pi()
 
 
@@ -15,7 +15,7 @@ botChannelId=803765954138996777 #bot channel id
 
 print("starting bot...")
 
-pi.set_mode(pin1, pigpio.OUTPUT)
+#pi.set_mode(pin1, pigpio.OUTPUT)
 
 class MyClient(discord.Client):
     mazeAngle = [0.0,0.0]
@@ -23,11 +23,14 @@ class MyClient(discord.Client):
     yAxis = 0
     xRequests = 0
     yRequests = 0
+    #pigpio.start()
 
     async def updateLoop(self):
         botChannel=self.get_channel(botChannelId)
         while True:
 
+            pi.set_servo_pulsewidth(12, ((self.mazeAngle[0]+1)*1000)+500)
+            pi.set_servo_pulsewidth(13, ((self.mazeAngle[1]+1)*1000)+500)
 
             sleep(1)
 
@@ -47,7 +50,7 @@ class MyClient(discord.Client):
             self.mazeAngle[0]+=self.xAxis
             self.mazeAngle[1]+=self.yAxis
 
-            pi.set_PWM_dutycycle(pin1, self.mazeAngle[0] * 50)
+            #pi.set_PWM_dutycycle(pin1, self.mazeAngle[0] * 50)
 
             #reset variables
             self.xAxis=0
@@ -84,6 +87,8 @@ class MyClient(discord.Client):
         if message.content == "d":
            self.xAxis+=1
            self.xRequests+=1
+
+    #pigpio.stop()
 
 #start bot
 client = MyClient()
