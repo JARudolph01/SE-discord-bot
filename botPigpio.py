@@ -29,8 +29,8 @@ class MyClient(discord.Client):
         botChannel=self.get_channel(botChannelId)
         while True:
 
-            pi.set_servo_pulsewidth(12, ((self.mazeAngle[0]+1)*500)+1000)
-            pi.set_servo_pulsewidth(13, ((self.mazeAngle[1]+1)*500)+1000)
+            pi.set_servo_pulsewidth(12, ((self.mazeAngle[0]+1)*1000)+500)
+            pi.set_servo_pulsewidth(13, ((self.mazeAngle[1]+1)*1000)+500)
 
             #sleep(1)
             await asyncio.sleep(1)
@@ -74,16 +74,16 @@ class MyClient(discord.Client):
             return
         if message.content == "hello there":
             await botChannel.send('General Kenobi!')
-        if message.content == "w":
+        if message.content == "w" or message.content == "W":
            self.yAxis+=1
            self.yRequests+=1
-        if message.content == "a":
+        if message.content == "a" or message.content == "A":
            self.xAxis-=1
            self.xRequests+=1
-        if message.content == "s":
+        if message.content == "s" or message.content == "S":
            self.yAxis-=1
            self.yRequests+=1
-        if message.content == "d":
+        if message.content == "d" or message.content == "D":
            self.xAxis+=1
            self.xRequests+=1
 
