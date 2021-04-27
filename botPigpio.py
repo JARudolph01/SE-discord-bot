@@ -74,6 +74,8 @@ class MyClient(discord.Client):
             return
         if message.content == "hello there":
             await botChannel.send('General Kenobi!')
+        if message.content == "help":
+            await botChannel.send("Type 'w', 'a', 's', 'd' in chat to tilt the maze.\nEvery second, the bot will average all the inputs and tilt the maze.\n")
         if message.content == "w" or message.content == "W":
            self.yAxis+=1
            self.yRequests+=1
